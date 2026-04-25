@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import api from "../services/api";
+import GitHubHeatmap from "../components/GitHubHeatmap";
+import LeetCodeSection from "../components/LeetCodeSection";
 import {
   User,
   MapPin,
@@ -18,6 +20,8 @@ import {
   XCircle,
   ExternalLink,
   Zap,
+  Terminal,
+  Trophy,
 } from "lucide-react";
 
 interface GithubRepo {
@@ -48,6 +52,9 @@ const ProfilePage: React.FC = () => {
     analysis: string;
   } | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [leetcodeInput, setLeetcodeInput] = useState("");
+  const [savingLeetcode, setSavingLeetcode] = useState(false);
+  const [leetcodeUsername, setLeetcodeUsername] = useState("");
 
   useEffect(() => {
     if (user?.githubUsername) {
@@ -60,7 +67,25 @@ const ProfilePage: React.FC = () => {
         analysis: user.skillLevelAnalysis || "",
       });
     }
+    if (user?.leetcodeUsername) {
+      setLeetcodeUsername(user.leetcodeUsername);
+      setLeetcodeInput(user.leetcodeUsername);
+    }
   }, [user]);
+
+  const handleSaveLeetcode = async () => {
+    if (!leetcodeInput.trim()) return;
+    try {
+      setSavingLeetcode(true);
+      await api.post("/leetcode/connect", { leetcodeUsername: leetcodeInput.trim() });
+      setLeetcodeUsername(leetcodeInput.trim());
+      await refreshUser();
+    } catch (err: any) {
+      setErrorMsg(err.response?.data?.message || "Failed to save LeetCode username");
+    } finally {
+      setSavingLeetcode(false);
+    }
+  };
 
   const hasResumeParsed = user?.skills && user.skills.length > 0;
 
@@ -449,6 +474,55 @@ const ProfilePage: React.FC = () => {
           {errorMsg && (
             <div className="mt-4 flex items-center gap-2 text-red-400 bg-red-900/20 px-4 py-3 rounded-xl border border-red-400/30 text-sm">
               <XCircle className="w-4 h-4 flex-shrink-0" /> {errorMsg}
+            </div>
+          )}
+        </div>
+
+        {/* GitHub Contribution Heatmap */}
+        {(githubConnected || user.authProvider === "github") && user.githubUsername && (
+          <div className="bg-gradient-to-br from-[#1a1a1a] to-[#111] rounded-3xl p-6 sm:p-8 border border-gray-800/50 shadow-2xl mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-5 flex items-center gap-3">
+              <Github className="w-6 h-6 text-green-400" /> Contribution Activity
+            </h2>
+            <GitHubHeatmap githubUsername={user.githubUsername} />
+          </div>
+        )}
+
+        {/* LeetCode Progress */}
+        <div className="bg-gradient-to-br from-[#1a1a1a] to-[#111] rounded-3xl p-6 sm:p-8 border border-gray-800/50 shadow-2xl mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-white mb-5 flex items-center gap-3">
+            <Trophy className="w-6 h-6 text-yellow-400" /> LeetCode Progress
+          </h2>
+          {!leetcodeUsername ? (
+            <div>
+              <p className="text-gray-400 text-sm mb-4">Connect your LeetCode profile to show your coding progress and badges.</p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="text"
+                  value={leetcodeInput}
+                  onChange={e => setLeetcodeInput(e.target.value)}
+                  placeholder="Enter your LeetCode username"
+                  className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 transition-all"
+                />
+                <button
+                  onClick={handleSaveLeetcode}
+                  disabled={savingLeetcode || !leetcodeInput.trim()}
+                  className="px-6 py-3 bg-yellow-400 text-black font-bold rounded-xl hover:bg-yellow-300 transition-all disabled:opacity-50 flex items-center gap-2"
+                >
+                  {savingLeetcode ? <Loader2 className="w-4 h-4 animate-spin" /> : <Terminal className="w-4 h-4" />}
+                  Connect LeetCode
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <LeetCodeSection username={leetcodeUsername} />
+              <button
+                onClick={() => setLeetcodeUsername("")}
+                className="mt-4 text-xs text-gray-500 hover:text-gray-300 underline"
+              >
+                Change username
+              </button>
             </div>
           )}
         </div>

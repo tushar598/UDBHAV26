@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import NotificationBell from "./NotificationBell";
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
@@ -14,12 +15,20 @@ const Navbar: React.FC = () => {
     navigate("/");
   };
 
-  const navLinks = [
+  const userNavLinks = [
     { name: "Home", path: "/" },
     { name: "Jobs", path: "/jobs" },
     { name: "Internships", path: "/internships" },
     { name: "Resume Upload", path: "/resume-upload" },
   ];
+
+  const companyNavLinks = [
+    { name: "Dashboard", path: "/company/dashboard" },
+    { name: "Developers", path: "/company/developers" },
+    { name: "Chat", path: "/chat" },
+  ];
+
+  const navLinks = user?.role === "company" ? companyNavLinks : userNavLinks;
 
   const initials = user?.name
     ? user.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
@@ -80,6 +89,7 @@ const Navbar: React.FC = () => {
                     Profile
                   </span>
                 </Link>
+                <NotificationBell />
                 <button
                   onClick={handleLogout}
                   className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300"

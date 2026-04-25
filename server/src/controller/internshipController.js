@@ -1,6 +1,8 @@
 import User from "../models/user.js";
 import Internship from "../models/internship.js";
-import { scrapeInternships } from "../services/scraper/internshipScraper.js";
+import Resume from "../models/resume.js";
+import { scrapeInternships } from "../services/scraper/internshipScrapper.js";
+import { autoApplyInternshala } from "../services/scraper/autoApply.js";
 
 export async function fetchAndSaveInternships(req, res) {
   try {
@@ -53,9 +55,31 @@ export async function fetchAndSaveInternships(req, res) {
       `✅ Saved ${internshipDocs.length} new internships for user: ${userId}`
     );
 
+    // 🤖 Auto-apply with user's resume (best-effort)
+    let applicationResults = [];
+    try {
+      const resume = await Resume.findOne({ userId });
+      if (resume && resume.fileData) {
+        console.log(`🤖 Starting auto-apply for ${internshipDocs.length} internships...`);
+        applicationResults = await autoApplyInternshala(
+          userId,
+          internshipDocs,
+          resume.fileData,
+          resume.fileName || "resume.pdf",
+          { name: user.name, email: user.email, skills: user.skills || [] }
+        );
+        console.log(`✅ Auto-apply completed: ${applicationResults.length} results`);
+      } else {
+        console.log("⚠️ No resume found — skipping auto-apply");
+      }
+    } catch (autoApplyErr) {
+      console.error("⚠️ Auto-apply error (non-fatal):", autoApplyErr.message);
+    }
+
     return res.status(200).json({
       message: "Internships scraped successfully",
       internships: internshipDocs,
+      applicationResults,
     });
   } catch (error) {
     console.error("❌ Error in fetchAndSaveInternships:", error);

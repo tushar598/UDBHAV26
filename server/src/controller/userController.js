@@ -17,6 +17,7 @@ export const registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      authProvider: "local",
     });
 
     res.status(201).json({
@@ -37,20 +38,27 @@ export const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    // If user signed up via OAuth and has no password
+    if (!user.password) {
+      return res.status(400).json({
+        message: `This account uses ${user.authProvider} login. Please sign in with ${user.authProvider}.`,
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(401).json({ message: "Invalid credentials" });
 
-    // Create JWT Token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    // Create JWT Token — include role so AuthContext can route correctly on refresh
+    const token = jwt.sign({ id: user._id, role: "user" }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
 
     // ✅ Send token in cookie
     res.cookie("token", token, {
-      httpOnly: true, // prevents JS access
-      secure: process.env.NODE_ENV === "production", // use true in production (HTTPS)
-      sameSite: "strict", // helps prevent CSRF
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -65,15 +73,78 @@ export const loginUser = async (req, res) => {
   }
 };
 
+// ✅ OAuth Callback Handler — creates JWT and redirects to client
+export const oauthCallback = async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.redirect(
+        `${process.env.CLIENT_URL || "http://localhost:5173"}/login?error=auth_failed`
+      );
+    }
+
+    // Create JWT Token — include role so AuthContext can route correctly on refresh
+    const token = jwt.sign({ id: user._id, role: "user" }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    // Set token in cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax", // lax for OAuth redirects
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    // Redirect to client
+    res.redirect(
+      `${process.env.CLIENT_URL || "http://localhost:5173"}/resume-upload`
+    );
+  } catch (error) {
+    console.error("OAuth callback error:", error);
+    res.redirect(
+      `${process.env.CLIENT_URL || "http://localhost:5173"}/login?error=server_error`
+    );
+  }
+};
+
+// ✅ Get Profile (enhanced with all fields)
 export const getProfile = async (req, res) => {
   try {
     const userId = req.userId;
-    const user = await User.findById(userId);
-    res.status(200).json({ id: user.id, name: user.name, email: user.email });
+    const user = await User.findById(userId).select("-password -githubAccessToken");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      profilePhoto: user.profilePhoto || "",
+      authProvider: user.authProvider || "local",
+      role: user.role || "user",
+      location: user.location || "",
+      skills: user.skills || [],
+      desiredPost: user.desiredPost || [],
+      desiredLocation: user.desiredLocation || [],
+      githubUsername: user.githubUsername || "",
+      githubRepos: user.githubRepos || [],
+      leetcodeUsername: user.leetcodeUsername || "",
+      skillLevel: user.skillLevel || "",
+      skillLevelAnalysis: user.skillLevelAnalysis || "",
+      createdAt: user.createAt,
+    });
   } catch (error) {
     console.error("Error fetching profile:", error);
     res.status(500).json({ message: "Server Error" });
   }
+};
+
+// ✅ Lightweight "who am I" — reads role from JWT, zero DB calls
+export const getMe = (req, res) => {
+  res.status(200).json({ id: req.userId, role: req.userRole });
 };
 
 export const logoutUser = (req, res) => {

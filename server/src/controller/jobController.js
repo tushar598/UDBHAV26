@@ -1,6 +1,6 @@
 import User from "../models/user.js";
 import Job from "../models/job.js";
-import { scrapeJobs } from "../services/scraper/jobScraper.js";
+import { scrapeJobs } from "../services/scraper/jobScrapper.js";
 
 // 🧠 Fetch, refresh, and save jobs for a specific user
 export const fetchAndSaveJobs = async (req, res) => {

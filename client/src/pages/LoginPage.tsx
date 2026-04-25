@@ -349,6 +349,17 @@ const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
                   Sign up for free
                 </a>
               </p>
+
+              {/* Company Login Link */}
+              <p className="text-center text-gray-400 mt-4">
+                Are you a company?{" "}
+                <a
+                  href="/company/login"
+                  className="text-green-400 hover:text-green-300 font-semibold transition-colors"
+                >
+                  Log in here
+                </a>
+              </p>
             </div>
           </div>
         </div>

@@ -58,8 +58,12 @@ Generate only valid JSON without additional explanation.
 `.trim();
 
     // 6. Call Gemini (Generative Language API)
-    const url =
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+    const apiKey = process.env.GOOGLE_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ message: "GOOGLE_API_KEY is not set in environment" });
+    }
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
     const payload = {
       contents: [
@@ -67,14 +71,25 @@ Generate only valid JSON without additional explanation.
           parts: [{ text: prompt }],
         },
       ],
+      generationConfig: {
+        responseMimeType: "application/json",
+      },
     };
 
-    const headers = {
-      "Content-Type": "application/json",
-      "x-goog-api-key": process.env.GOOGLE_API_KEY,
-    };
-
-    const geminiResponse = await axios.post(url, payload, { headers });
+    let geminiResponse;
+    try {
+      geminiResponse = await axios.post(url, payload, {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (apiErr) {
+      const errData = apiErr.response?.data;
+      console.error("❌ Gemini API error:", JSON.stringify(errData, null, 2));
+      return res.status(502).json({
+        message: "Gemini API call failed",
+        status: apiErr.response?.status,
+        error: errData?.error?.message || apiErr.message,
+      });
+    }
 
     // 7. Extract the returned text safely
     const candidate = geminiResponse?.data?.candidates?.[0];

@@ -1,17 +1,11 @@
 import express from "express";
-import { verifyToken } from "../middlewares/authMiddleware.js";
-import {
-  loginUser,
-  registerUser,
-  logoutUser,
-  getProfile,
-} from "../controller/userController.js";
+import multer from "multer";
+import { uploadResume, getUserResume } from "../controller/resumeController.js";
 
+const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.post("/logout", logoutUser);
-router.get("/profile", verifyToken,getProfile);
+router.post("/upload", upload.single("resume"), uploadResume);
+router.get("/:userId", getUserResume);
 
 export default router;

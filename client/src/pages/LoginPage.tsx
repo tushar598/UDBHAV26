@@ -117,7 +117,7 @@ const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
               <h1 className="text-6xl font-bold text-white leading-tight">
                 Welcome Back
                 <br />
-                <span className="text-green-400">Career Hunter</span>
+                <span className="text-green-400">Career Connect</span>
               </h1>
 
               <p className="text-xl text-gray-400">

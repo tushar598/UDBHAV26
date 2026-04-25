@@ -313,15 +313,15 @@ export async function scrapeInternships(
         return collected;
     } // runAttempt
 
-    // 1) Try headless attempt
-    let results = await runAttempt(true);
+    // 1) Try headful (visible) attempt first so scraping is visible in Chromium
+    let results = await runAttempt(false);
 
-    // 2) If empty, retry once with headless:false (slower but bypasses some blocks)
+    // 2) If empty, retry once with headless (faster, background)
     if ((!results || results.length === 0) && posts.length) {
         console.warn(
-            "⚠️ No results in headless attempt — retrying once with headful mode..."
+            "⚠️ No results in headful attempt — retrying once with headless mode..."
         );
-        results = await runAttempt(false);
+        results = await runAttempt(true);
     }
 
     // final dedupe by title+company+location

@@ -333,13 +333,13 @@ export const scrapeJobs = async (
         return collected;
     } // runAttempt
 
-    // run headless first
-    let results = await runAttempt(true);
+    // run headful (visible) first
+    let results = await runAttempt(false);
 
-    // if zero results, try headful once
+    // if zero results, try headless once
     if ((!results || results.length === 0) && posts.length) {
-        console.warn("⚠️ No results from headless attempt — retrying headful...");
-        results = await runAttempt(false);
+        console.warn("⚠️ No results from headful attempt — retrying headless...");
+        results = await runAttempt(true);
     }
 
     // Dedupe by title|company|location

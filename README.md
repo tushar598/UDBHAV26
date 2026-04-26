@@ -8,6 +8,8 @@
 
 > *"Apply once. Let the platform do the rest."*
 
+![CareerConnect Landing Page](client/public/entrypage.png)
+
 ---
 
 ## 🎯 The Problem We Are Solving
@@ -43,6 +45,10 @@ When a user signs up, CareerConnect automatically cross-references three trusted
 
 The result? A candidate profile that companies can *trust*, because no part of it is self-declared without proof.
 
+![User Dashboard — First Look](client/public/userfirstpage.png)
+
+![User Profile — Verified Portfolio](client/public/userprofilepage.png)
+
 ---
 
 ### 🤖 2. Automated Scraping + Auto-Apply Engine
@@ -58,6 +64,8 @@ Here is how it works, step by step:
 
 A process that used to take hours of manual effort every week now happens automatically in the background while you sleep.
 
+![Job Listings — Auto-Scraped & Matched](client/public/jobpage.png)
+
 ---
 
 ### 🏢 3. A Smarter Hiring Experience for Companies
@@ -67,6 +75,10 @@ For recruiters, CareerConnect acts like a pre-screened talent database.
 - View a candidate's full public profile — GitHub activity, LeetCode stats, parsed resume — all in one place.
 - Skip the resume screening pile. The platform's AI has already assessed skill levels, so you can shortlist with confidence.
 - Start a **real-time conversation** directly with candidates you are interested in, right from the dashboard — no email chains, no waiting.
+
+![Company Dashboard](client/public/companydashboard.png)
+
+![Developer Discovery — Verified Candidate List](client/public/companylist.png)
 
 ---
 
@@ -85,6 +97,8 @@ Once a company finds a candidate they like, they can initiate a live chat direct
 - Real-time messaging with instant delivery.
 - Typing indicators so both sides know the other is engaged.
 - Read receipts and notification alerts.
+
+![Real-Time Chat System](client/public/chatsystem.png)
 
 ---
 

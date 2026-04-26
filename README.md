@@ -209,6 +209,9 @@ The client runs on `http://localhost:5173` and the server on `http://localhost:5
 
 ## 🧪 Demo Access
 
+### 📹 Project Demo Video
+> Watch the full platform walkthrough: **[▶ View Demo on Google Drive](https://drive.google.com/file/d/1HLuGf__Te3vbHt4GcDyAdZaoKR-nv0ii/view?usp=sharing)**
+
 To explore the company-side features, seed a demo company account into the database:
 
 ```bash

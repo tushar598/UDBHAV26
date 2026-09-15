@@ -35,13 +35,19 @@ CareerConnect is an intelligent career platform with two missions running in par
 
 ## ✨ What Makes CareerConnect Different — Our USPs
 
-### 🔐 1. Verified Skill Profiles (Not Just Self-Reported Claims)
-Most platforms ask candidates to *type* their skills. We *verify* them.
+### 🔐 ### 🔹 1. Verified Skill Profiles — Not Just Self-Reported Claims
 
-When a user signs up, CareerConnect automatically cross-references three trusted sources:
-- **Resume** — AI reads and extracts skills, qualifications, and experience directly from the uploaded PDF.
-- **GitHub** — Live contribution heatmaps, repository tech-stacks, and open-source activity are pulled and displayed.
-- **LeetCode** — Contest rankings, problem-solving streaks, and topic-wise performance are fetched in real time.
+Most platforms rely on candidates to simply **list their skills**. CareerConnect **verifies them**.
+
+When a user signs up, CareerConnect automatically validates their profile using three trusted sources:
+
+* **Resume** — AI extracts skills, qualifications, and experience directly from the uploaded PDF.
+* **GitHub** — Live contribution activity, repository tech stacks, and open-source involvement are analyzed.
+* **LeetCode** — Contest ratings, problem-solving streaks, and topic-wise performance are fetched and evaluated.
+
+The result is a **proof-backed candidate profile** where skills are supported by real evidence—not just claims.
+
+**CareerConnect helps companies discover what candidates can actually do, not just what they say they can do.**
 
 The result? A candidate profile that companies can *trust*, because no part of it is self-declared without proof.
 

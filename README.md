@@ -35,7 +35,7 @@ CareerConnect is an intelligent career platform with two missions running in par
 
 ## ✨ What Makes CareerConnect Different — Our USPs
 
-### 🔐 ### 🔹 1. Verified Skill Profiles — Not Just Self-Reported Claims
+### 🔐  🔹 1. Verified Skill Profiles — Not Just Self-Reported Claims
 
 Most platforms rely on candidates to simply **list their skills**. CareerConnect **verifies them**.
 

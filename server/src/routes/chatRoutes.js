@@ -14,7 +14,7 @@ router.get("/conversations", verifyToken, getConversations);
 // ✅ Get messages for a conversation
 router.get("/messages/:conversationId", verifyToken, getMessages);
 
-// ✅ Send a message
+// ✅ Send a message.
 router.post("/send", verifyToken, sendMessage);
 
 export default router;
